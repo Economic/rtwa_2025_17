@@ -23,7 +23,7 @@ syntax, cpi_csv(string)
   rename cpi_u old_cpi_u
   egen cpi_u = max(old_cpi_u), by(quarterdate)
   keep mdate quarter cpi_u
-  save "${input_clean_dir}cpi_projections_2_2023.dta", replace
+  save "${input_clean_dir}cpi_projections_1_2025.dta", replace
 
 end
 
