@@ -17,7 +17,7 @@ create_state_spreadsheet <- function(data, filename) {
     pull(state_name) %>% 
     unique() %>% 
     # remove some states from detailed summary due to small affected #s
-    str_subset("California|Hawaii|District|Oregon|Washington", negate = TRUE) %>% 
+    str_subset("California|Hawaii|District|Washington", negate = TRUE) %>% 
     # place US total at top by removing, alphabetizing, and then adding back in
     str_subset("United States", negate = TRUE) %>% 
     sort() %>% 
@@ -176,7 +176,8 @@ add_state_summary_worksheet <- function(workbook, data, notes, source) {
       "Total annual wage change (2025$, millions)" = wage_change_total_ann,
       "Average annual wage increase of affected workers (2025$)" = wage_change_avg_ann,
       "Percent change in average annual wages of affected workers" = wage_change_affected_pct
-    )
+    ) |> 
+    select(-matches("irectly"))
   
   sheet_table_title <- "Summary of effects in 2030 of increasing the minimum wage to $17 by 2030, by state"
   
@@ -185,18 +186,18 @@ add_state_summary_worksheet <- function(workbook, data, notes, source) {
   workbook <- workbook %>% 
     wb_add_worksheet("States", gridLines = FALSE) %>%
     wb_add_data(x = state_summary_data, start_row = 2) %>%
-    wb_merge_cells(rows = 1, cols = 1:11) %>%
+    wb_merge_cells(rows = 1, cols = 1:7) %>%
     wb_add_data(x = sheet_table_title, start_row = 1) %>%
-    wb_set_col_widths(cols = 2:11, widths = 15) %>%
+    wb_set_col_widths(cols = 2:7, widths = 15) %>%
     wb_set_col_widths(cols = 1, widths = 45) %>% 
     wb_set_row_heights(rows = 1, heights = 30) %>% 
     wb_set_row_heights(rows = 2, heights = 60) %>% 
     wb_add_cell_style(dims = "A1", horizontal = "center") %>%
     wb_add_cell_style(dims = "A2:A54", horizontal = "left") %>%
-    wb_add_cell_style(dims = "B2:K2", wrapText = "1", horizontal = "center") %>% 
-    wb_add_cell_style(dims = "B3:K54", horizontal = "center") %>% 
+    wb_add_cell_style(dims = "B2:G2", wrapText = "1", horizontal = "center") %>% 
+    wb_add_cell_style(dims = "B3:G54", horizontal = "center") %>% 
     wb_add_font(dims = "A1", size = "15") %>% 
-    wb_add_font(dims = "A2:K2", bold = TRUE) %>%
+    wb_add_font(dims = "A2:G2", bold = TRUE) %>%
     wb_add_border(
       dims = "B2:B54", 
       bottom_border = NULL,
@@ -205,7 +206,7 @@ add_state_summary_worksheet <- function(workbook, data, notes, source) {
       right_border = NULL
     ) %>% 
     wb_add_border(
-      dims = "A2:K2", 
+      dims = "A2:G2", 
       bottom_border = "thick",
       top_border = "medium",
       left_border = NULL,
@@ -221,17 +222,17 @@ add_state_summary_worksheet <- function(workbook, data, notes, source) {
   
   # fill style
   for (i in seq(4, 54, 2)) {
-    dim_range <- paste0("A", i, ":K", i)
+    dim_range <- paste0("A", i, ":G", i)
     workbook <- workbook %>% 
       wb_add_fill(dims = dim_range, color = wb_color(hex = fill_color))
   }
   
   workbook <- workbook %>% 
-    wb_merge_cells(rows = 55, cols = 1:11) %>%
+    wb_merge_cells(rows = 55, cols = 1:7) %>%
     wb_add_data(x = notes, start_row = 55) %>% 
     wb_add_cell_style(dims = "A55", wrapText = "1") %>% 
     wb_set_row_heights(rows = 55, heights = 65) %>% 
-    wb_merge_cells(rows = 56, cols = 1:11) %>% 
+    wb_merge_cells(rows = 56, cols = 1:7) %>% 
     wb_add_cell_style(dims = "A56", wrapText = "1") %>% 
     wb_add_data(x = source, start_row = 56)
   

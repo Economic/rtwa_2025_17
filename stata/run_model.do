@@ -16,7 +16,7 @@ syntax, ///
   cpi_file(string) /// 
   pop_file(string) ///
   state_mw_file(string) ///
-  [local_mw_file(string)]
+  [local_mw_file(string) local_correction(real 0)]
   
   use `policy_schedule_file' if name == "`policy_name'", clear
   sum step
@@ -61,6 +61,22 @@ syntax, ///
       replace tipmin`a' = local_tw`a' if local_tw`a' > tipmin`a' & local_tw`a' != .
     }
     drop local_mw* local_tw*
+  }
+
+  if `local_correction' == 1 {
+    * local oregon mw correction
+    gen oregon = pwstate == 41
+    gen oregon_port = oregon == 1 & inlist(pwpuma,1325,1326,1327)
+    gen oregon_non = oregon == 1 & inlist(pwpuma,100,200,300,800,1000)
+    gen oregon_std = oregon == 1 & oregon_port == 0 & oregon_non == 0
+
+    forvalues a = 1/`steps' {
+      replace stmin`a' = stmin`a' - 1.00 if oregon_non == 1
+      replace stmin`a' = stmin`a' + 1.25 if oregon_port == 1
+      replace tipmin`a' = stmin`a' if oregon == 1
+    }
+
+    drop oregon oregon_port oregon_non oregon_std
   }
 
   tempfile microdata_input

@@ -110,9 +110,8 @@ tar_assign({
     cpi_file = cpi_proj_data,
     pop_file = pop_proj_data,
     state_mw_file = state_mw_data,
-    #local_correction = 1,
-    .outputs = "outputs/model_run_microdata_acs_rtwa_17_2030.dta",
-    .remove_log = F
+    local_correction = 1,
+    .outputs = "outputs/model_run_microdata_acs_rtwa_17_2030.dta"
   ) |> 
     tar_file()
 

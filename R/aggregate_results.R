@@ -99,7 +99,7 @@ suppress_clean_rename <- function(data) {
   # suppress wage changes if affected sample size less than 1000
   data %>% 
     mutate(across(matches("^total"), ~ if_else(.x < 1500, NA, .x))) %>%
-    mutate(across(matches("^share"), ~ if_else(.x < 0.005, NA, .x))) %>%
+    mutate(across(matches("^share"), ~ if_else(.x < 0.006, NA, .x))) %>%
     mutate(across(
       matches("d_affected"),
       ~ if_else(is.na(total_d_affected) | is.na(share_d_affected), NA, .x)
@@ -139,7 +139,7 @@ suppress_clean_rename <- function(data) {
     ) %>%
     mutate(across(
       matches("^wage_change"),
-      ~ if_else(n_affected < 1000, "*", .x)
+      ~ if_else(n_affected < 500, "*", .x)
     )) %>%
     select(-n_affected, -n_workforce) %>%
     mutate(across(where(is.character), ~ replace_na(.x, ""))) %>%
