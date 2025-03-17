@@ -22,10 +22,11 @@ syntax, mw_csv(string) tipmw_csv(string)
   
     import delimited using ``x'_csv', clear
     drop cpivalue
+    cap drop v55
     foreach var of varlist _all {
       if "`var'" != "notes" rename `var' `mw_var_name'`var'
     }
-    gen date = date(notes, "YMD")
+    gen date = date(notes, "MY", 2050)
     gen year = year(date)
     gen month = month(date)
     keep year month `mw_var_name'*
@@ -37,7 +38,11 @@ syntax, mw_csv(string) tipmw_csv(string)
     rename state_fips pwstate
     rename state_census statecensus
     keep year month `mw_var_name' pwstate statecensus
-    keep if year >= 2022
+
+    replace `mw_var_name' = subinstr(`mw_var_name', "$", "", .)
+    destring `mw_var_name', replace
+
+    keep if year >= 2024
     tempfile state_`x'
     save `state_`x''
   }

@@ -72,8 +72,7 @@ tar_assign({
     dofile_clean_state_mw,
     mw_csv = state_mw_csv,
     tipmw_csv = state_tipmw_csv,
-    .outputs = "inputs_clean/state_mins.dta",
-    .remove_log = F
+    .outputs = "inputs_clean/state_mins.dta"
   ) |> 
     tar_file()
 

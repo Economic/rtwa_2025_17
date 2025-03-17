@@ -47,7 +47,7 @@ syntax, ///
   }
   
   use `microdata_file', clear 
-  gen nom_wage_growth0 = 0.05
+  gen nom_wage_growth0 = 0.035
 
   * merge counterfactual state minimum wages
   merge m:1 pwstate using `active_state_mw', assert(3) nogenerate
@@ -66,7 +66,7 @@ syntax, ///
   tempfile microdata_input
   save `microdata_input'
 
-  local rwg_value = 0.005
+  local rwg_value = 0.008
   
   mwsim run, microdata(`microdata_input') policy(`policy_schedule_input') steps(`steps') ///
     cpi(`cpi_file') population(`pop_file') real_wage_growth(`rwg_value')
