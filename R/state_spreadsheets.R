@@ -5,11 +5,17 @@ create_state_spreadsheet <- function(data, filename) {
     fmt_txt("Economic Policy Institute Minimum Wage Simulation Model; see Technical Methodology by Cooper, Mokhiber, and Zipperer (2019).")
   )
   
-  notes <- paste(
+  us_notes <- paste(
     fmt_txt("Notes: ", bold = TRUE),
     fmt_txt("Values reflect the population estimated to be affected by the proposed change in the federal minimum wage. Wage changes resulting from scheduled state and local minimum wage laws are accounted for by EPI’s Minimum Wage Simulation Model. Totals may not sum due to rounding. Shares calculated from unrounded values. Directly affected workers will see their wages rise as the new minimum wage rate will exceed their current hourly pay. Indirectly affected workers have a wage rate just above the new minimum wage (between the new minimum wage and 115% of the new minimum). They will receive a raise as employer pay scales are adjusted upward to reflect the new minimum wage. Values marked * cannot be displayed because of sample size restrictions.")
   )
   
+  state_summary_notes <- paste(
+    fmt_txt("Notes: ", bold = TRUE),
+    fmt_txt("Values reflect the population estimated to be affected by the proposed change in the federal minimum wage. Wage changes resulting from scheduled state and local minimum wage laws are accounted for by EPI’s Minimum Wage Simulation Model. Totals may not sum due to rounding. Shares calculated from unrounded values. Affected workers include both directly affected workers (who will see their wages rise as the new minimum wage rate will exceed their current hourly pay) and indirectly affected workers (who have a wage rate just above the new minimum wage (between the new minimum wage and 115% of the new minimum, and who will receive a raise as employer pay scales are adjusted upward to reflect the new minimum wage). Values marked * cannot be displayed because of sample size restrictions.")
+  )
+  
+
   wb <- wb_workbook() %>% 
     add_state_intro_worksheet() 
   
@@ -23,13 +29,11 @@ create_state_spreadsheet <- function(data, filename) {
     sort() %>% 
     c("United States", .)
   
-  for (i in "United States") {
-    wb <- wb %>% 
-      add_state_worksheet(i, data, notes, source)
-  }
+  wb <- wb %>% 
+    add_state_worksheet("United States", data, us_notes, source)
 
   wb = wb |> 
-    add_state_summary_worksheet(data, notes, source)
+    add_state_summary_worksheet(data, state_summary_notes, source)
   
   wb_save(wb, filename)
   
