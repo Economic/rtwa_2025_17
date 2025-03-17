@@ -11,23 +11,25 @@ create_state_spreadsheet <- function(data, filename) {
   )
   
   wb <- wb_workbook() %>% 
-    add_state_intro_worksheet() %>% 
-    add_state_summary_worksheet(data, notes, source)
+    add_state_intro_worksheet() 
   
   state_names <- data %>% 
     pull(state_name) %>% 
     unique() %>% 
     # remove some states from detailed summary due to small affected #s
-    str_subset("California|Hawaii|District|Washington", negate = TRUE) %>% 
+    str_subset("California|Hawaii|District|Oregon|Washington", negate = TRUE) %>% 
     # place US total at top by removing, alphabetizing, and then adding back in
     str_subset("United States", negate = TRUE) %>% 
     sort() %>% 
     c("United States", .)
   
-  for (i in state_names) {
+  for (i in "United States") {
     wb <- wb %>% 
       add_state_worksheet(i, data, notes, source)
   }
+
+  wb = wb |> 
+    add_state_summary_worksheet(data, notes, source)
   
   wb_save(wb, filename)
   
@@ -47,7 +49,7 @@ add_state_worksheet <- function(workbook, state, data, notes, source) {
   sheet_table_title <- paste(
     "Demographic characteristics of", 
     state, 
-    "workers who would benefit if the federal minimum wage were raised to $17 by 2028"
+    "workers who would benefit if the federal minimum wage were raised to $17 by 2030"
   )
   
   if (state == "United States") worksheet_name = "U.S. Total"
@@ -132,22 +134,22 @@ add_state_worksheet <- function(workbook, state, data, notes, source) {
 add_state_intro_worksheet <- function(workbook) {
   workbook %>% 
     wb_add_worksheet("README") %>%
-    wb_add_data(x = "State-specific estimates of the Raise the Wage Act of 2023", start_row = 1) %>% 
-    wb_add_data(x = "Economic Policy Institute, July 2023", start_row = 2) %>% 
-    wb_add_data(x = "This spreadsheet contains state-specific estimates of the effects of the Raise the Wage Act of 2023, as estimated by the Economic Policy Institute Minimum Wage Simulation Model.", start_row = 4) %>% 
+    wb_add_data(x = "Estimated effects of the Raise the Wage Act of 2025", start_row = 1) %>% 
+    wb_add_data(x = "Economic Policy Institute, March 2025", start_row = 2) %>% 
+    wb_add_data(x = "This spreadsheet contains national and state-specific estimates of the effects of the Raise the Wage Act of 2025, as estimated by the Economic Policy Institute Minimum Wage Simulation Model.", start_row = 4) %>% 
     wb_add_data(x = "Detailed estimates for California, District of Columbia, Hawaii, and Washington are unavailable because of the small number of workers affected by the policy in these states.", start_row = 6) %>% 
     wb_add_data(x = "CITATIONS", start_row = 8) %>% 
-    wb_add_data(x = "Please cite the estimates in this spreadsheet as \"Estimated effects of Raise the Wage Act of 2023,\" Economic Policy Institute Minimum Wage Simulation Model, July 2023.", start_row = 9) %>% 
+    wb_add_data(x = "Please cite the estimates in this spreadsheet as \"Estimated effects of Raise the Wage Act of 2025,\" Economic Policy Institute Minimum Wage Simulation Model, March 2025.", start_row = 9) %>% 
     wb_add_data(x = "ASSUMPTIONS", start_row = 11) %>% 
-    wb_add_data(x = "The estimates are for the year 2028, when the policy's regular minimum wage is $17 and the tipped minimum wage is $15.", start_row = 12) %>% 
-    wb_add_data(x = "The underlying wage distribution is based on the 2022 Current Population Survey.", start_row = 13) %>%
-    wb_add_data(x = "The simulation assumes nominal wage growth will be at a 5.0% annual rate between 2022 and 2023, and at a annual rate of 0.5% plus projected CPI growth in subsequent years.", start_row = 14) %>% 
-    wb_add_data(x = "The simulation accounts for estimated effects of projected state and local minimum wages between 2023 and 2028.", start_row = 15) %>% 
+    wb_add_data(x = "The estimates are for the year 2030, when the policy's regular minimum wage is $17 and the tipped minimum wage is $15.", start_row = 12) %>% 
+    wb_add_data(x = "The underlying wage distribution is based on the 2024 Current Population Survey.", start_row = 13) %>%
+    wb_add_data(x = "The simulation assumes nominal wage growth will be at a 3.5% annual rate between 2024 and 2025, and at a annual rate of 0.8% plus projected CPI growth in subsequent years.", start_row = 14) %>% 
+    wb_add_data(x = "The simulation accounts for estimated effects of projected state minimum wages between 2025 and 2030.", start_row = 15) %>% 
     wb_add_data(x = "DOCUMENTATION", start_row = 17) %>% 
     wb_add_data(x = "To read more about the EPI Minimum Wage Simulation Model, see", start_row = 18) %>% 
     wb_add_data(x = "* the description in Cooper, Mokhiber, Zipperer (2019): https://www.epi.org/publication/minimum-wage-simulation-model-technical-methodology/", start_row = 19) %>% 
     wb_add_data(x = "* a Stata implementation of the simulation model: https://github.com/Economic/min_wage_sim", start_row = 20) %>% 
-    wb_add_data(x = "* the code used to produce these estimates: https://github.com/Economic/rtwa_2023_17", start_row = 21) %>% 
+    wb_add_data(x = "* the code used to produce these estimates: https://github.com/Economic/rtwa_2025_17", start_row = 21) %>% 
     wb_add_font(dims = "A1", size = "15", bold = TRUE) %>% 
     wb_set_col_widths(cols = 1, widths = 175) %>% 
     wb_add_font(dims = "A8", bold = TRUE) %>%
@@ -171,17 +173,17 @@ add_state_summary_worksheet <- function(workbook, data, notes, source) {
     select(State = state_name, everything()) %>% 
     mutate(State = if_else(State == "United States", "U.S. Total", State)) %>% 
     rename(
-      "Total annual wage change (2023$, millions)" = wage_change_total_ann,
-      "Average annual wage increase of affected workers (2023$)" = wage_change_avg_ann,
+      "Total annual wage change (2025$, millions)" = wage_change_total_ann,
+      "Average annual wage increase of affected workers (2025$)" = wage_change_avg_ann,
       "Percent change in average annual wages of affected workers" = wage_change_affected_pct
     )
   
-  sheet_table_title <- "Summary of effects in 2028 of increasing the minimum wage to $17 by 2028, by state"
+  sheet_table_title <- "Summary of effects in 2030 of increasing the minimum wage to $17 by 2030, by state"
   
   fill_color <- "ffebf2fa"
   
   workbook <- workbook %>% 
-    wb_add_worksheet("State summary", gridLines = FALSE) %>%
+    wb_add_worksheet("States", gridLines = FALSE) %>%
     wb_add_data(x = state_summary_data, start_row = 2) %>%
     wb_merge_cells(rows = 1, cols = 1:11) %>%
     wb_add_data(x = sheet_table_title, start_row = 1) %>%
@@ -235,4 +237,5 @@ add_state_summary_worksheet <- function(workbook, data, notes, source) {
   
   workbook
 }
+
 

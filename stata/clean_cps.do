@@ -9,7 +9,7 @@ capture program drop clean_cps_base
 program define clean_cps_base
   
   * clean CPS data
-  load_epiextracts, begin(2022m1) end(2022m12) sample(org) 
+  load_epiextracts, begin(2024m1) end(2024m12) sample(org)
   keep if wageotc > 0 & wageotc != .
   assert age >= 16 & cow1 >= 1 & cow1 <= 5 & emp == 1
   gen byte worker = 1
@@ -116,27 +116,3 @@ end
 clean_cps_base
 
 
-/*
-* merge counterfactual wage growth projections
-* use 4% as 2022-2023 growth
-gen nom_wage_growth0 = 0.04
-local policy_list ""
-foreach x of numlist 15/21 {
-  foreach y of numlist 2025/2029 {
-    local policy_list `policy_list' `x'_`y'
-  }
-}
-
-foreach policy in `policy_list' {
-
-    preserve 
-    *merge in existing and scheduled state minimum wages
-    merge m:1 pwstate using "${input_clean_dir}active_state_mins_rtwa_`policy'.dta", assert(3) nogenerate
-
-    compress 
-    save ${input_clean_dir}clean_cps_rtwa_`policy'.dta, replace
-    
-    restore
-}
-*/
- 
