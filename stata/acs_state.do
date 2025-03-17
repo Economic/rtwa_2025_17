@@ -21,6 +21,7 @@ use `acs_prep_file', clear
 ********************************************************************************
 * output: variable perwt0 perwt1 perwt2
 
+rename perwt perwt0
 gen perwt1 = perwt0
 gen perwt2 = perwt1
 
@@ -46,8 +47,10 @@ gen hrwage1 = hrwage0
 * output: variable hrwage2
 do `acs_impute_do_file'
 
-keep adj_wkswork* age bpl citizen classwkr classwkrd educd empstatd empstat famsize famunit foodstmp ftotinc hasyouth_* hhincome hhwt hispan* hrwage0 hrwage1 hrwage2 incearn inctot incwage ind ind1990 majorind majorocc marst metro met2013 nchild nfams occ parent_* parttime pernum perwt0 perwt1 perwt2 poverty puma pwpuma pwstate rac* related serial sex statefips subfam uhrswork vetstatd wkswork2 year
+keep adj_wkswork* age bpl citizen classwkr classwkrd educd empstatd empstat famsize famunit foodstmp ftotinc hasyouth_* hhincome hhwt hispan* hrwage0 hrwage1 hrwage2 incearn inctot incwage ind ind1990 marst metro met2013 nchild nfams occ parent_* pernum perwt0 perwt1 perwt2 poverty puma pwpuma pwstate rac* related serial sex statefips subfam uhrswork vetstatd wkswork2 year
 compress
 saveold ${input_clean_dir}acs_state.dta, replace version(13)
 
 end
+
+acs_state, `stata_arguments'

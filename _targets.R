@@ -46,8 +46,7 @@ tar_assign({
     dofile_prep_acs,
     acs_raw_file = acs_ipums_raw,
     acs_raw_file_base = fs::path_ext_remove(acs_ipums_raw),
-    .outputs = "inputs_clean/acs_prep.dta",
-    .remove_log = F
+    .outputs = "inputs_clean/acs_prep.dta"
   ) |> 
     tar_file()
 
