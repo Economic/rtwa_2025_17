@@ -181,7 +181,7 @@ add_state_summary_worksheet <- function(workbook, data, notes, source) {
       "Average annual wage increase of affected workers (2025$)" = wage_change_avg_ann,
       "Percent change in average annual wages of affected workers" = wage_change_affected_pct
     ) |> 
-    select(-matches("irectly"))
+    select(-matches("irectly")) 
   
   sheet_table_title <- "Summary of effects in 2030 of increasing the minimum wage to $17 by 2030, by state"
   

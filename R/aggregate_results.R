@@ -132,7 +132,7 @@ suppress_clean_rename <- function(data) {
     mutate(wage_change_total_ann = wage_change_total_ann / 10^6) %>%
     mutate(across(
       wage_change_total_ann|wage_change_avg_ann,
-      ~ scales::label_comma(accuracy = 1)(.x)
+      ~ scales::label_dollar(accuracy = 1)(.x)
     )) %>%
     mutate(wage_change_affected_pct =
              scales::label_percent(accuracy = 0.1)(wage_change_affected_pct)
