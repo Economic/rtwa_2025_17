@@ -27,18 +27,18 @@ tar_assign({
   # scenario inputs
   policy_schedules_csv = tar_file("inputs_raw/all_scenarios.csv")
   acs_ipums_raw = tar_file("inputs_raw/usa_00084.dta.gz")
-  
+
   # clean cps microdata
   cps_base = do_file_target(
     dofile_clean_cps,
     .outputs = "inputs_clean/clean_cps_base.dta"
-  ) |> 
+  ) |>
     tar_file()
 
   # total wage and salary benchmark from CPS
-  cps_emp_benchmark = read_dta(cps_base) |> 
-    summarize(sum(perwt0)) |> 
-    pull() |> 
+  cps_emp_benchmark = read_dta(cps_base) |>
+    summarize(sum(perwt0)) |>
+    pull() |>
     tar_target()
 
   # prep acs data
@@ -47,7 +47,7 @@ tar_assign({
     acs_raw_file = acs_ipums_raw,
     acs_raw_file_base = fs::path_ext_remove(acs_ipums_raw),
     .outputs = "inputs_clean/acs_prep.dta"
-  ) |> 
+  ) |>
     tar_file()
 
   acs_state_wages = do_file_target(
@@ -55,7 +55,7 @@ tar_assign({
     acs_prep_file = acs_prep,
     acs_impute_do_file = dofile_acs_wage_impute,
     .outputs = "inputs_clean/acs_state.dta"
-  ) |> 
+  ) |>
     tar_file()
 
   acs_state_base = do_file_target(
@@ -64,7 +64,7 @@ tar_assign({
     cps_emp_benchmark = cps_emp_benchmark,
     geo = "state",
     .outputs = "inputs_clean/clean_acs_state_base.dta"
-  ) |> 
+  ) |>
     tar_file()
 
   # clean state-level mw projections
@@ -73,7 +73,7 @@ tar_assign({
     mw_csv = state_mw_csv,
     tipmw_csv = state_tipmw_csv,
     .outputs = "inputs_clean/state_mins.dta"
-  ) |> 
+  ) |>
     tar_file()
 
   # clean cpi projections
@@ -81,15 +81,15 @@ tar_assign({
     dofile_clean_cpi_proj,
     cpi_csv = cpi_proj_csv,
     .outputs = "inputs_clean/cpi_projections_1_2025.dta"
-  ) |> 
+  ) |>
     tar_file()
-  
+
   # clean pop projections
   pop_proj_data = do_file_target(
     dofile_clean_pop_proj,
     pop_csv = pop_proj_csv,
     .outputs = "inputs_clean/pop_projections_8_2020.dta"
-  ) |> 
+  ) |>
     tar_file()
 
   # clean scenario inputs
@@ -97,7 +97,7 @@ tar_assign({
     dofile_clean_policy_schedules,
     scenarios_csv = policy_schedules_csv,
     .outputs = "inputs_clean/all_scenarios.dta"
-  ) |> 
+  ) |>
     tar_file()
 
   # run CPS model
@@ -112,7 +112,7 @@ tar_assign({
     state_mw_file = state_mw_data,
     local_correction = 1,
     .outputs = "outputs/model_run_microdata_acs_rtwa_17_2030.dta"
-  ) |> 
+  ) |>
     tar_file()
 
   # run CPS model
@@ -126,50 +126,61 @@ tar_assign({
     pop_file = pop_proj_data,
     state_mw_file = state_mw_data,
     .outputs = "outputs/model_run_microdata_cps_rtwa_17_2030.dta"
-  ) |> 
+  ) |>
     tar_file()
 
-  results_cps_raw_microdata = read_dta(cps_rtwa_17_2030) |> 
-    repair_directly_affected() |> 
-    repair_indirectly_affected() |> 
-    mutate(all = haven::labelled(1, c("All workers" = 1))) |> 
+  results_cps_raw_microdata = read_dta(cps_rtwa_17_2030) |>
+    repair_directly_affected() |>
+    repair_indirectly_affected() |>
+    mutate(all = haven::labelled(1, c("All workers" = 1))) |>
     tar_parquet()
 
-  results_acs_raw_microdata = read_dta(acs_rtwa_17_2030) |> 
-    repair_directly_affected() |> 
-    repair_indirectly_affected() |> 
-    mutate(all = haven::labelled(1, c("All workers" = 1))) |> 
+  results_acs_raw_microdata = read_dta(acs_rtwa_17_2030) |>
+    repair_directly_affected() |>
+    repair_indirectly_affected() |>
+    mutate(all = haven::labelled(1, c("All workers" = 1))) |>
     tar_parquet()
 
   summary_stat_cps = results_cps_raw_microdata |>
-    summarize(sum((direct6 == 1 | indirect6 == 1) * perwt6)) |> 
+    summarize(sum((direct6 == 1 | indirect6 == 1) * perwt6)) |>
     tar_target()
 
   summary_stat_acs = results_acs_raw_microdata |>
-    summarize(sum((direct6 == 1 | indirect6 == 1) * perwt6)) |> 
+    summarize(sum((direct6 == 1 | indirect6 == 1) * perwt6)) |>
     tar_target()
 
   results_acs_state_summary = create_state_results(
-    results_acs_raw_microdata, 
+    results_acs_raw_microdata,
     step = 6,
     cpi_step = 358.205,
     cpi_base = 319.537
-  ) |> 
+  ) |>
     tar_target()
 
   results_cps_state_summary = create_state_results(
-    results_cps_raw_microdata, 
+    results_cps_raw_microdata,
     step = 6,
     cpi_step = 358.205,
     cpi_base = 319.537
-  ) |> 
+  ) |>
     tar_target()
 
   # create state-specific and national tables
   spreadsheet_state = create_state_spreadsheet(
-    results_acs_state_summary, 
+    results_acs_state_summary,
     "outputs/rtwa_17_2025_state_tables.xlsx"
-  ) |> tar_file()
+  ) |>
+    tar_file()
 
+  spreadsheet_female = create_demo_spreadsheet(
+    results_acs_raw_microdata,
+    step = 6,
+    cpi_step = 358.205,
+    cpi_base = 319.537,
+    filter_string = "female == 1",
+    omitted_groups = "female",
+    title = "women",
+    output_file = "outputs/rtwa_17_2025_female_tables.xlsx"
+  ) |>
+    tar_file()
 })
-

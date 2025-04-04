@@ -35,6 +35,9 @@ cps_base|stem|d5a470b4bca00f26|872beeefd1f35b5f|3bd9774848b15aa3|309855943|input
 cps_emp_benchmark|stem|d770a45a54832eb4|04735d6dbb8fbc01|930136512cea87fe|1547328540||t20164.2143306395s|s55b|55|rds|local|vector|||0.194||
 cps_rtwa_17_2030|stem|90bc7512e9258275|3948e56755aa9d70|7cf378f944edec22|784437039|outputs/model_run_microdata_cps_rtwa_17_2030.dta|t20164.214337445s|s29008407b|29008407|file|local|vector|||0.623||
 results_cps_raw_microdata|stem|078743406ad0dafa|7ad8abd24816ffef|6e620c4e12d43abd|227105332||t20164.2143542157s|s8053012b|8053012|parquet|local|vector|||0.973||
+results_cps_state_summary|stem|2a326d17ff6c5c70|c1163b3ddb25616c|f4c3ef9e5d17db34|130698669||t20171.7617900281s|s18925b|18925|rds|local|vector|||13.601||
+results_acs_state_summary|stem|f277ea48effec83e|c627d81bf99fbb82|39e328594d23e307|2035769073||t20171.7620528845s|s62217b|62217|rds|local|vector|||22.038||
+spreadsheet_state|stem|ea4264f7f68f5d94|b98b585f99b59ad0|ac303e880613b0a9|-221725198|outputs/rtwa_17_2025_state_tables.xlsx|t20182.7628664491s|s17596b|17596|file|local|vector|||0.889||
 repair_direct_step|function|8b1605e46133605e
 misc_cleanup|function|cb8fde861a3bc1d1
 add_demo_summary_worksheet|function|d0795b8398ca1ea5
@@ -51,10 +54,8 @@ repair_directly_affected|function|f0ee752f4fef73a9
 create_demo_results|function|5aa3dbdfcfe23e38
 create_state_results|function|6981847258062e18
 do_file_target|function|e86f5e7b8965ab79
-create_state_spreadsheet|function|8b39eef9e65e3d44
+create_state_spreadsheet|function|4ad393a67a24ae1a
 repair_indirectly_affected|function|a9b0b3f855cbf969
-create_demo_spreadsheet|function|a4a825404a87e14a
+create_demo_spreadsheet|function|32657c47f247f870
 prep_acs_results|function|136e8a7a02265cbd
-results_cps_state_summary|stem|2a326d17ff6c5c70|c1163b3ddb25616c|f4c3ef9e5d17db34|130698669||t20171.7617900281s|s18925b|18925|rds|local|vector|||13.601||
-results_acs_state_summary|stem|f277ea48effec83e|c627d81bf99fbb82|39e328594d23e307|2035769073||t20171.7620528845s|s62217b|62217|rds|local|vector|||22.038||
-spreadsheet_state|stem|7daca39ebafb6ae6|b98b585f99b59ad0|f22eaf3689273049|-221725198|outputs/rtwa_17_2025_state_tables.xlsx|t20171.7620682085s|s17616b|17616|file|local|vector|||1.319||
+spreadsheet_female|stem|c24d2c3a3a5957a1|d9923ef50884a2f5|480eca7b68f2fc57|-114431674|outputs/rtwa_17_2025_female_tables.xlsx|t20182.7654279664s|s11384b|11384|file|local|vector|||3.847||
